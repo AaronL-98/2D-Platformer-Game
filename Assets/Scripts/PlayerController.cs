@@ -48,21 +48,21 @@ public class PlayerController : MonoBehaviour
 
     m_rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, m_rb.linearVelocity.y);
     
-    m_Animator.SetFloat("Speed", Mathf.Abs(m_rb.linearVelocityX));
+    m_Animator.SetFloat("Speed", Mathf.Abs(m_rb.linearVelocity.x));
     
     if (horizontalInput != 0)
     {
         m_SpriteRenderer.flipX = horizontalInput < 0;
     }
 
+    // Check if grounded
     isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     m_Animator.SetBool("Grounded", isGrounded);
-
+    
     // Jumping
     if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
     {
-      m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, jumpForce);
-      m_Animator.SetTrigger("Jump");
+      Jump();
     }
     // Crouching
     if (Input.GetKey(KeyCode.LeftControl))
@@ -73,8 +73,18 @@ public class PlayerController : MonoBehaviour
     {
       StandUp();
     }
+    m_Animator.SetFloat("VerticalVelocity", m_rb.linearVelocity.y);
+  }
+  void Jump() 
+  {
+    // Apply jump force
+    m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, jumpForce);
 
-    Debug.Log("grounded: " + m_Animator.GetBool("Grounded") + " crouch: " + m_Animator.GetBool("Crouch"));
+    // Trigger jump animation
+    m_Animator.SetTrigger("Jump");
+
+    // Set grounded state to false
+    isGrounded = false;
   }
   void Crouch()
   {
@@ -106,7 +116,7 @@ public class PlayerController : MonoBehaviour
   }
   void OnDrawGizmosSelected()
   {
-    // Draw the ground check radius in the editor for debugging
+    // Visualize the ground check radius in the editor
     if (groundCheck != null)
     {
         Gizmos.color = Color.red;
