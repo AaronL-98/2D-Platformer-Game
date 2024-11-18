@@ -24,13 +24,20 @@ public class LevelController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    void ResetPlayerPosition()
+    public void ResetPlayerPosition()
     {
         if (m_LevelStart != null && m_Player != null) 
         {
             m_Player.transform.position = m_LevelStart.transform.position;
         } else {
             Debug.LogWarning("Player or LevelStart object not found!");
+        }
+
+        // Reset player velocity to zero (if Rigidbody2D is attached)
+        Rigidbody2D rb = m_Player.GetComponent<Rigidbody2D>();
+        if (rb != null) 
+        {
+            rb.linearVelocity = Vector2.zero;
         }
     }
 }
