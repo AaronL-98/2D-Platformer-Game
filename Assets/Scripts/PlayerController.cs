@@ -13,13 +13,9 @@ public class PlayerController : MonoBehaviour
 
   public Vector2 crouchColliderSize = new Vector2(1f, 0.5f);
   public Vector2 crouchColliderOffset = new Vector2(0f, -0.25f);
-  private Vector2 originalColliderSize;
-  private Vector2 originalColliderOffset;
+  private Vector2 originalColliderSize, originalColliderOffset;
   private bool isCrouching = false;
   // Ground Check
-  public Transform groundCheck; // Empty GameObject positioned at the player's feet
-  public float groundCheckRadius = 0.2f; // Radius of the overlap circle
-  public LayerMask groundLayer; // Layer assigned to ground objects
   private bool isGrounded;
   void Start()
   {
@@ -32,36 +28,20 @@ public class PlayerController : MonoBehaviour
     // Store original collider size and offset
     originalColliderSize = playerCollider.bounds.size;
     originalColliderOffset = playerCollider.offset;
-
-    // Automatically create the GroundCheck object if not assigned
-    if (groundCheck == null)
-    {
-      GameObject groundCheckObject = new GameObject("GroundCheck");
-      groundCheckObject.transform.parent = transform; // Make it a child of the player
-      groundCheckObject.transform.localPosition = new Vector3(0, -1f, 0); // Position it at the player's feet
-      groundCheck = groundCheckObject.transform; // Assign the transform
-    }
   }
   void Update()
   {
     float horizontalInput = Input.GetAxis("Horizontal");
-
+    // Move the player
     m_rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, m_rb.linearVelocity.y);
-    
-    m_Animator.SetFloat("Speed", Mathf.Abs(m_rb.linearVelocity.x));
-    
-    if (horizontalInput != 0)
-    {
-        m_SpriteRenderer.flipX = horizontalInput < 0;
+    // Flip the sprite based on direction
+    if (horizontalInput != 0){
+      m_SpriteRenderer.flipX = horizontalInput < 0;
     }
-
-    // Check if grounded
-    isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-    m_Animator.SetBool("Grounded", isGrounded);
-    
+    // Set animator speed parameter
+    m_Animator.SetFloat("Speed", Mathf.Abs(m_rb.linearVelocity.x));
     // Jumping
-    if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-    {
+    if (Input.GetKeyDown(KeyCode.Space) && isGrounded){
       Jump();
     }
     // Crouching
@@ -73,6 +53,8 @@ public class PlayerController : MonoBehaviour
     {
       StandUp();
     }
+    // Check if grounded
+    m_Animator.SetBool("Grounded", isGrounded);
     m_Animator.SetFloat("VerticalVelocity", m_rb.linearVelocity.y);
   }
   void Jump() 
@@ -114,13 +96,15 @@ public class PlayerController : MonoBehaviour
         boxCollider.offset = originalColliderOffset;
     }
   }
-  void OnDrawGizmosSelected()
-  {
-    // Visualize the ground check radius in the editor
-    if (groundCheck != null)
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+  void OnCollisionEnter2D(Collision2D collision) {
+    if (collision.gameObject.CompareTag("Platform")) {
+      isGrounded = true;
+    }
+  }
+
+  void OnCollisionExit2D(Collision2D collision) {
+    if (collision.gameObject.CompareTag("Platform")) {
+      isGrounded = false;
     }
   }
 }
