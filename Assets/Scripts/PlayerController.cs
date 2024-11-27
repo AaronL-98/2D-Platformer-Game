@@ -1,15 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
+  public ScoreController scoreController;
   public float moveSpeed = 1f;
   public float jumpForce = 5f;
   private Animator m_Animator;
   private Rigidbody2D m_rb;
   private SpriteRenderer m_SpriteRenderer;
   private Collider2D playerCollider;
+
 
   public Vector2 crouchColliderSize = new Vector2(1f, 0.5f);
   public Vector2 crouchColliderOffset = new Vector2(0f, -0.25f);
@@ -107,4 +110,10 @@ public class PlayerController : MonoBehaviour
       isGrounded = false;
     }
   }
+
+    public void PickupKey()
+    {
+      Debug.Log("player picked up key");
+      scoreController.IncrementScore(1);
+    }
 }
