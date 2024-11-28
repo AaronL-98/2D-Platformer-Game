@@ -105,15 +105,24 @@ public class PlayerController : MonoBehaviour
     }
   }
 
-  void OnCollisionExit2D(Collision2D collision) {
-    if (collision.gameObject.CompareTag("Platform")) {
+  void OnCollisionExit2D(Collision2D collision) 
+  {
+    if (collision.gameObject.CompareTag("Platform")) 
+    {
       isGrounded = false;
     }
   }
 
-    public void PickupKey()
-    {
-      Debug.Log("player picked up key");
-      scoreController.IncrementScore(1);
-    }
+  public void PickupKey()
+  {
+    Debug.Log("player picked up key");
+    scoreController.IncrementScore(1);
+  }
+
+  public void KillPlayer()
+  {
+    Debug.Log("player killed by enemy");
+    //Death animation
+    //Reload Scene
+  }
 }

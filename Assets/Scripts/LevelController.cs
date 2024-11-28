@@ -20,6 +20,12 @@ public class LevelController : MonoBehaviour
         ResetPlayerPosition();
     }
     
+    public void ReloadLevel()
+    {
+        Debug.Log("Restarting Level");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     public void LoadNextLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
