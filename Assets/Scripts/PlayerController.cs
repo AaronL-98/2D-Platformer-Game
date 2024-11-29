@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
   private Rigidbody2D m_rb;
   private SpriteRenderer m_SpriteRenderer;
   private Collider2D playerCollider;
+  private LevelController levelController;
 
 
   public Vector2 crouchColliderSize = new Vector2(1f, 0.5f);
@@ -31,6 +32,13 @@ public class PlayerController : MonoBehaviour
     // Store original collider size and offset
     originalColliderSize = playerCollider.bounds.size;
     originalColliderOffset = playerCollider.offset;
+
+    // Find the LevelController on the LevelManager GameObject
+    GameObject levelManager = GameObject.Find("LevelManager");
+    if (levelManager != null) 
+    {
+      levelController = levelManager.GetComponent<LevelController>();
+    }
   }
   void Update()
   {
@@ -123,6 +131,7 @@ public class PlayerController : MonoBehaviour
   {
     Debug.Log("player killed by enemy");
     //Death animation
-    //Reload Scene
+    levelController?.LoseLife();
+
   }
 }
